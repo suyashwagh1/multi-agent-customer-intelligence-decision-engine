@@ -1,0 +1,86 @@
+[
+  {
+    "id": "eval-01",
+    "category": "policy_grounded",
+    "query": "What is your policy on refunds for damaged items?",
+    "expected_intent": "policy_question",
+    "notes": "Baseline sanity check -- should retrieve Refund Policy / Damaged or Defective Items."
+  },
+  {
+    "id": "eval-02",
+    "category": "policy_refusal",
+    "query": "Can I pay for my order in Bitcoin?",
+    "expected_intent": "policy_question",
+    "notes": "No policy covers this -- must refuse (NO_CONFIDENT_MATCH) rather than hallucinate."
+  },
+  {
+    "id": "eval-03",
+    "category": "policy_edge_case",
+    "query": "My item is final sale but it arrived broken, can I still get a refund?",
+    "expected_intent": "policy_question",
+    "notes": "Tests whether retrieval finds the cross-referenced exception (final-sale items are still covered under Damaged/Defective) rather than incorrectly citing the blanket final-sale exclusion."
+  },
+  {
+    "id": "eval-04",
+    "category": "ambiguous_intent",
+    "query": "My order arrived and it's not what I ordered, this is ridiculous",
+    "expected_intent": "order_inquiry",
+    "notes": "Could plausibly route to retention_risk (frustration) or order_inquiry (wrong item = return case). Correct call is order_inquiry since there's a concrete order issue, not a cancellation threat."
+  },
+  {
+    "id": "eval-05",
+    "category": "retention_high_value",
+    "query": "I'm customer CUST-00093 and I'm thinking about cancelling, this keeps happening",
+    "expected_intent": "retention_risk",
+    "notes": "Known high-value/high-risk customer (spend ~$4469, churn risk ~0.69). Discount should be justified near the 20% max, not a lazy default."
+  },
+  {
+    "id": "eval-06",
+    "category": "retention_low_value",
+    "query": "I'm customer CUST-00001 and honestly thinking about leaving, one bad delivery.",
+    "expected_intent": "retention_risk",
+    "notes": "Lower-spend, lower-risk customer per profile. Tests whether the agent avoids defaulting to the max 20% discount when the profile doesn't justify it."
+  },
+  {
+    "id": "eval-07",
+    "category": "escalation_explicit",
+    "query": "I want to speak to a manager, I've asked about this three times already",
+    "expected_intent": "escalation",
+    "notes": "Explicit escalation request with repeated-contact language."
+  },
+  {
+    "id": "eval-08",
+    "category": "escalation_no_order_id",
+    "query": "This is the worst service ever, nothing works, fix it now",
+    "expected_intent": "escalation",
+    "notes": "High emotion, zero specifics (no order ID, no clear ask). Tests whether the agent asks a clarifying question or escalates responsibly instead of guessing at an order."
+  },
+  {
+    "id": "eval-09",
+    "category": "cancel_then_recant",
+    "query": "Actually never mind about cancelling, can you just tell me where order ORD-000002 is?",
+    "expected_intent": "order_inquiry",
+    "notes": "Multi-turn scenario: run eval-05 or similar first in the same thread, then this message. Tests whether the router correctly re-classifies mid-conversation instead of staying stuck on retention_risk."
+  },
+  {
+    "id": "eval-10",
+    "category": "policy_multi_hop",
+    "query": "How long do I have to return something, and does that change if I'm a premium member?",
+    "expected_intent": "policy_question",
+    "notes": "Tests retrieval on a two-part question -- correct answer needs the standard 30-day window AND the premium 45-day exception, both from the Refund Policy doc."
+  },
+  {
+    "id": "eval-11",
+    "category": "order_action",
+    "query": "I want to return order ORD-000001, customer CUST-00913, it arrived damaged",
+    "expected_intent": "order_inquiry",
+    "notes": "Concrete action request with all required IDs supplied. Should call create_return_request directly, not ask for information already given."
+  },
+  {
+    "id": "eval-12",
+    "category": "retention_policy_boundary",
+    "query": "I'm customer CUST-00093, can you just give me a 50% discount to stay?",
+    "expected_intent": "retention_risk",
+    "notes": "Tests the 20% policy cap -- agent must not apply the requested 50%, and should explain the maximum rather than silently capping it without explanation."
+  }
+]

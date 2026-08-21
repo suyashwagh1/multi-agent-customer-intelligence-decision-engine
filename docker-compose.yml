@@ -1,0 +1,22 @@
+﻿services:
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: cia_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cia_user
+      POSTGRES_PASSWORD: cia_password
+      POSTGRES_DB: customer_intelligence
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cia_user -d customer_intelligence"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
