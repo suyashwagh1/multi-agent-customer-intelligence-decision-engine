@@ -2,6 +2,8 @@
 
 A router-based multi-agent customer support system built on LangGraph and Claude, backed by a real PostgreSQL database. Instead of a single prompt answering everything, an intent classifier routes each customer message to one of four specialized agents -- each restricted to its own tools, each capable of taking real, persisted actions (order lookups, return requests, retention discounts, escalation tickets) rather than just generating text. A hybrid retrieval pipeline (BM25 + dense embeddings + cross-encoder reranking) grounds policy answers in actual source documents, and refuses to answer when no confident match exists rather than hallucinating.
 
+LINK - https://multi-agent-customer-intelligence-decision-engine-exrivq3futtm.streamlit.app/
+
 ## Overview
 
 Customer support systems generate two kinds of data: transactional (orders, returns) and conversational (support tickets, complaints). Making good decisions from this data -- who's at risk of churning, what a policy actually says, when to escalate to a human -- requires combining structured customer intelligence with agentic reasoning over unstructured language.
@@ -291,10 +293,6 @@ Core tables: `customers`, `products`, `orders`, `tickets`, `customer_metrics`, `
 - `.env.example` contains placeholders only.
 - Database credentials in `docker-compose.yml` are local development defaults, not production secrets.
 
-## License
-
-License: Not specified yet.
 
 ## Author
-
 Suyash Wagh
