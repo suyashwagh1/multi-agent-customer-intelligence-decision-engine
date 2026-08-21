@@ -129,6 +129,9 @@ def build_graph():
         max_size=5,
         kwargs={"autocommit": True, "prepare_threshold": 0},
         open=False,
+        check=ConnectionPool.check_connection,
+        max_idle=300,
+        reconnect_timeout=10,
     )
     pool.open(wait=True)
 
