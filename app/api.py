@@ -12,11 +12,11 @@ _graph_state = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    graph, checkpointer_cm = build_graph()
+    graph, pool = build_graph()
     _graph_state["graph"] = graph
-    _graph_state["checkpointer_cm"] = checkpointer_cm
+    _graph_state["pool"] = pool
     yield
-    _graph_state["checkpointer_cm"].__exit__(None, None, None)
+    _graph_state["pool"].close()
 
 
 app = FastAPI(

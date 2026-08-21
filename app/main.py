@@ -6,7 +6,7 @@ from app.graph.build_graph import build_graph
 
 
 def main():
-    graph, checkpointer_cm = build_graph()
+    graph, pool = build_graph()
     config = {"configurable": {"thread_id": f"cli-test-{uuid.uuid4().hex[:8]}"}}
 
     print("OrderAgent ready. Type a message (Ctrl+C to quit).")
@@ -32,7 +32,7 @@ def main():
     except KeyboardInterrupt:
         print("\nExiting.")
     finally:
-        checkpointer_cm.__exit__(None, None, None)
+        pool.close()
 
 
 if __name__ == "__main__":

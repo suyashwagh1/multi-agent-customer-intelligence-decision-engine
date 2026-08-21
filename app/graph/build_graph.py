@@ -5,6 +5,7 @@ from langchain_anthropic import ChatAnthropic
 from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from psycopg_pool import ConnectionPool
 
 from app.db.session import DB_URL
 from app.graph.router import route_by_intent, router_node
@@ -123,9 +124,16 @@ def build_graph():
         },
     )
 
-    checkpointer_cm = PostgresSaver.from_conn_string(DB_URL)
-    checkpointer = checkpointer_cm.__enter__()
+    pool = ConnectionPool(
+        conninfo=DB_URL,
+        max_size=5,
+        kwargs={"autocommit": True, "prepare_threshold": 0},
+        open=False,
+    )
+    pool.open(wait=True)
+
+    checkpointer = PostgresSaver(pool)
     checkpointer.setup()
 
     graph = builder.compile(checkpointer=checkpointer)
-    return graph, checkpointer_cm
+    return graph, pool
